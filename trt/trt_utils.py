@@ -195,7 +195,7 @@ def build_engine(
                     config.set_flag(trt.BuilderFlag.FP16)
                 config.set_flag(trt.BuilderFlag.DISABLE_TIMING_CACHE)
                 # https://github.com/NVIDIA/TensorRT/issues/1196 (sometimes big diff in output when using FP16)
-                config.set_flag(trt.BuilderFlag.PREFER_PRECISION_CONSTRAINTS)
+                #config.set_flag(trt.BuilderFlag.PREFER_PRECISION_CONSTRAINTS)
                 with open(onnx_file_path, "rb") as f:
                     parser.parse(f.read())
                 profile: IOptimizationProfile = builder.create_optimization_profile()

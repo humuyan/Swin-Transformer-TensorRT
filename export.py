@@ -77,10 +77,10 @@ def export_onnx(model, config):
         quant_nn.TensorQuantizer.use_fb_fake_quant = True  # We have to shift to pytorch's fake quant ops before exporting the model to ONNX
 
         import onnx
-        dummy_input = torch.randn(config.BATCH_SIZE_ONNX, 3, 224, 224, device='cuda')
+        dummy_input = torch.randn(config.BATCH_SIZE_ONNX, 3, 224, 224)
 
         print('\nStarting ONNX export with onnx %s...' % onnx.__version__)
-        f = config.MODEL.RESUME.replace('.pth', '.onnx')  # filename
+        f = "swin.onnx"#config.MODEL.RESUME.replace('.pth', '.onnx')  # filename
         input_names = ["input_0"]
         output_names = ["output_0"]
 
@@ -88,11 +88,6 @@ def export_onnx(model, config):
         # So now we use fixed size
         # dynamic_axes = {'input_0': {0: 'batch_size'}}
         torch.onnx.export(model, dummy_input, f, verbose=False, opset_version=12,
-                          input_names=input_names,
-                          output_names=output_names,
-                          #dynamic_axes=dynamic_axes,
-                          enable_onnx_checker=False,
-                          do_constant_folding=True,
                           )
         print('ONNX export success, saved as %s' % f)
     except Exception as e:
@@ -102,12 +97,11 @@ def export_onnx(model, config):
 def main(config):
     logger.info(f"Creating model:{config.MODEL.TYPE}/{config.MODEL.NAME}")
     model = build_model(config)
-    model.cuda()
     logger.info(str(model))
 
 
-    max_accuracy = load_checkpoint(config, model, None, None, logger)
-    print('load_checkpoint, recovery max_accuracy: ', max_accuracy)
+    # max_accuracy = load_checkpoint(config, model, None, None, logger)
+    # print('load_checkpoint, recovery max_accuracy: ', max_accuracy)
 
     export_onnx(model, config)
 
